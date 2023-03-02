@@ -1,38 +1,17 @@
-import UIKit
+import Foundation
 
-struct Users: Decodable {
-    var cards: [Card]
-}
+let urlRequest = UrlRequest()
+var nameCard = "Black Lotus"
 
-struct Card: Decodable {
-    let name: String
-    let manaCost: String?
-    let type: String
-    let setName: String
-}
 
-var users = Users(cards: [])
+var components = URLComponents()
+components.scheme = "https"
+components.host = "api.magicthegathering.io"
+components.path = "/v1/cards"
+components.queryItems = [URLQueryItem(name: "name", value: "Black Lotus")]
 
-func getData(urlRequest: String) {
-        let urlRequest = URL(string: urlRequest)
-        guard let url = urlRequest else { return }
-        print("Ссылка действительна - ожидание ответа")
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if error != nil {
-                print((error?.localizedDescription)!)
-            } else if let response = response as? HTTPURLResponse, response.statusCode == 200 {
-                print("Ответ получен - статус кода \(response.statusCode)")
-                guard let data = data else { return }
-                
-//                let dataAsString = String(data: data, encoding: .utf8)
-//                print(dataAsString ?? "данных нет")
-                
-                let cards = try? JSONDecoder().decode(Users.self, from: data)
-        }
-    }.resume()
-}
+urlRequest.getData(urlRequest: components.string!, nameCard: nameCard)
 
-let url = "https://api.magicthegathering.io/v1/cards?name=Black%20Lotus"
-getData(urlRequest: url)
-
+components.queryItems = [URLQueryItem(name: "name", value: "Opt")]
+nameCard = "Opt"
+urlRequest.getData(urlRequest: components.string!, nameCard: nameCard)
